@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orchestra — AI Agents for Business</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f8f7f4;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ══════════════════════════════════
+       GLOBAL HEADER
+       ══════════════════════════════════ */
+    .global-header {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1rem 2rem;
+      text-align: center;
+    }
+    .global-header h1 {
+      font-size: 32px; font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .global-header p {
+      font-size: 15px; color: #666; max-width: 520px; margin: 0 auto; line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════
+       SERVICE NAV
+       ══════════════════════════════════ */
+    .service-nav {
+      max-width: 860px; margin: 0 auto;
+      display: flex; gap: 0;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 0 1rem;
+      overflow-x: auto;
+    }
+    .service-tab {
+      padding: 12px 22px;
+      font-size: 13px; font-weight: 500;
+      color: #888; cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      white-space: nowrap;
+      transition: all 0.18s;
+      background: none; border-top: none; border-left: none; border-right: none;
+      font-family: inherit;
+    }
+    .service-tab:hover { color: #1a1a1a; }
+    .service-tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+
+    /* ══════════════════════════════════
+       SERVICE PANELS
+       ══════════════════════════════════ */
+    .service-panel { display: none; animation: fadein 0.22s ease; }
+    .service-panel.active { display: block; }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════
+       SHARED
+       ══════════════════════════════════ */
+    .page-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #888; margin-bottom: 6px;
+    }
+    .page-title {
+      font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 5px;
+    }
+    .page-sub {
+      font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 24px;
+    }
+
+    .divider { border: none; border-top: 1px solid #e5e5e5; margin: 4px 0; }
+    .legend-title {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #888; margin-bottom: 2px;
+    }
+
+    /* ══════════════════════════════════
+       PANEL 1 — AI AGENT ECOSYSTEM
+       ══════════════════════════════════ */
+    .ecosystem-wrap {
+      max-width: 860px; margin: 0 auto; padding: 2rem 1rem 3rem;
+    }
+    .ecosystem-widget {
+      margin-top: 8px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+
+    /* ── AI Agent Ecosystem widget styles ── */
+    #aae-root{background:#040404;border-radius:16px;overflow:hidden;position:relative;width:100%;height:600px;font-family:'DM Sans',sans-serif}
+    #aae-root *{box-sizing:border-box;margin:0;padding:0}
+    #aae-root canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+    .aae-ht{position:absolute;top:14px;right:16px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);pointer-events:none;transition:opacity .4s}
+    #aae-av{position:absolute;inset:0;background:#040404;opacity:0;pointer-events:none;transition:opacity .5s;display:flex;flex-direction:column}
+    #aae-av.on{opacity:1;pointer-events:all}
+    .aae-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 20px 0;flex-shrink:0}
+    .aae-bk{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.18);cursor:pointer;border:none;background:none;font-family:inherit;transition:color .2s;padding:0}
+    .aae-bk:hover{color:rgba(255,255,255,.5)}
+    .aae-nm{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;line-height:1}
+    .aae-rep{display:flex;align-items:center;gap:4px;margin-top:3px}
+    .aae-ro{font-size:8px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.2);text-decoration:line-through}
+    .aae-ra{font-size:9px;color:rgba(255,255,255,.12)}
+    .aae-rn{font-size:8px;padding:1px 7px;border-radius:4px;font-weight:500;letter-spacing:.04em}
+    .aae-body{display:grid;grid-template-columns:1fr 1px 1fr;flex:1;min-height:0;padding:10px 0 0}
+    .aae-vd{background:rgba(255,255,255,.05)}
+    .aae-sc{display:flex;flex-direction:column;padding:0 12px 12px 20px;min-height:0}
+    .aae-shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0}
+    .aae-shl{display:flex;align-items:center;gap:6px}
+    .aae-sht{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:500}
+    .aae-ld{width:6px;height:6px;border-radius:50%;background:#10B981;box-shadow:0 0 6px rgba(16,185,129,.5);animation:aae-lp 1.4s ease-in-out infinite}
+    @keyframes aae-lp{0%,100%{opacity:1}50%{opacity:.15}}
+    .aae-ct{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.04em}
+    .aae-ct span{color:rgba(245,158,11,.75)}
+    .aae-sb{flex:1;min-height:0;border-radius:8px;background:rgba(255,255,255,.016);border:.5px solid rgba(255,255,255,.05);overflow:hidden;position:relative}
+    .aae-sb::before{content:'';position:absolute;top:0;left:0;right:0;height:48px;background:linear-gradient(to bottom,#040404,transparent);z-index:10;pointer-events:none}
+    .aae-sb::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(to top,#040404,transparent);z-index:10;pointer-events:none}
+    .aae-si{position:absolute;bottom:12px;left:0;right:0;display:flex;flex-direction:column;gap:5px;padding:0 12px}
+    .aae-sl{display:flex;gap:7px;align-items:flex-start;flex-shrink:0;opacity:0;animation:aae-si .35s ease forwards}
+    @keyframes aae-si{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    .aae-sl.aae-act-line{background:rgba(245,158,11,.05);border-radius:4px;padding:2px 5px;margin:0 -5px}
+    .aae-sl.aae-act-line .aae-tx{color:rgba(240,239,232,.6)}
+    .aae-ts{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:rgba(255,255,255,.15);flex-shrink:0;min-width:38px;padding-top:1px}
+    .aae-ic{font-size:9px;flex-shrink:0;width:10px;text-align:center;padding-top:1px}
+    .aae-tx{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(240,239,232,.38);flex:1;line-height:1.4}
+    .aae-tx b{font-weight:500;color:rgba(240,239,232,.65)}
+    .aae-vl{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:500;flex-shrink:0;white-space:nowrap;padding-top:1px}
+    .aae-rc{display:flex;flex-direction:column;padding:0 20px 12px 12px;gap:10px;min-height:0;overflow:hidden}
+    .aae-sh{display:flex;align-items:center;gap:7px;flex-shrink:0}
+    .aae-si2{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+    .aae-st{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:500}
+    .aae-lb{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+    .aae-lrn{border-radius:7px;padding:8px 11px;background:rgba(255,255,255,.022);border:.5px solid rgba(255,255,255,.055);opacity:0;transform:translateX(10px);transition:opacity .38s,transform .38s;display:flex;gap:9px;align-items:flex-start}
+    .aae-lrn.on{opacity:1;transform:translateX(0)}
+    .aae-ld2{width:3px;border-radius:2px;flex-shrink:0;margin-top:4px;align-self:stretch}
+    .aae-lt{font-size:11px;font-weight:500;color:rgba(240,239,232,.8);line-height:1.35}
+    .aae-ls{font-size:9.5px;font-weight:300;color:rgba(240,239,232,.28);line-height:1.45;margin-top:1px}
+    .aae-lsrc{font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:rgba(240,239,232,.14);margin-top:3px}
+    .aae-hr{border:none;border-top:.5px solid rgba(255,255,255,.05);flex-shrink:0}
+    .aae-ab{display:flex;flex-direction:column;gap:6px;flex:1;min-height:0;overflow:hidden}
+    .aae-ac{border-radius:7px;padding:8px 11px;opacity:0;transform:translateX(10px);transition:opacity .4s,transform .4s;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .aae-ac.on{opacity:1;transform:translateX(0)}
+    .aae-as{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;font-weight:500}
+    .aae-done{background:rgba(16,185,129,.12);color:#10B981}
+    .aae-run{background:rgba(245,158,11,.12);color:#F59E0B;animation:aae-spin 2s linear infinite}
+    .aae-wait{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)}
+    @keyframes aae-spin{to{transform:rotate(360deg)}}
+    .aae-ab2{flex:1;min-width:0}
+    .aae-at{font-size:11px;font-weight:500;color:rgba(240,239,232,.8);line-height:1.3}
+    .aae-as2{font-size:9.5px;font-weight:300;color:rgba(240,239,232,.28);margin-top:1px;line-height:1.4}
+    .aae-atg{font-size:7.5px;font-weight:500;padding:2px 7px;border-radius:5px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
+
+    /* ══════════════════════════════════
+       PANEL 2 — SEO / GEO AGENT
+       ══════════════════════════════════ */
+    .seo-wrap {
+      max-width: 860px; margin: 0 auto; padding: 2rem 1rem 3rem;
+    }
+    .seo-intro { margin-bottom: 28px; }
+
+    .seo-layout {
+      display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap;
+    }
+    .video-container {
+      flex: 1 1 400px; min-width: 280px;
+    }
+    .video-container video {
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+      background: #111;
+    }
+    .seo-legend {
+      flex: 0 0 280px;
+      display: flex; flex-direction: column; gap: 16px;
+      padding-top: 4px;
+    }
+    .seo-feature {
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .seo-feat-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
+    }
+    .seo-n1 { background: #dbeafe; color: #1d4ed8; }
+    .seo-n2 { background: #ede9fe; color: #6d28d9; }
+    .seo-n3 { background: #ffedd5; color: #c2410c; }
+    .seo-n4 { background: #dcfce7; color: #15803d; }
+    .seo-feat-text { font-size: 13px; color: #1a1a1a; line-height: 1.55; }
+    .seo-feat-text strong { font-weight: 600; }
+    .seo-feat-sub { font-size: 11.5px; color: #666; margin-top: 3px; line-height: 1.5; }
+    .seo-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 8px; }
+    .seo-stat {
+      background: #f0efec;
+      border-radius: 10px; padding: 12px 8px; text-align: center;
+    }
+    .seo-sv { font-size: 20px; font-weight: 600; color: #1d4ed8; margin-bottom: 3px; }
+    .seo-sl { font-size: 10px; color: #666; line-height: 1.4; }
+
+    /* ══════════════════════════════════
+       FOOTER
+       ══════════════════════════════════ */
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem 2.5rem;
+      font-size: 11px; color: #aaa;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .seo-layout { flex-direction: column; }
+      .seo-legend { flex: unset; width: 100%; }
+      .seo-stats { grid-template-columns: 1fr; }
+      #aae-root { height: 480px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ GLOBAL HEADER ══════════════ -->
+<div class="global-header">
+  <h1>Orchestra</h1>
+  <p>AI agent suites that work 24/7 — so your team focuses on what matters.</p>
+</div>
+
+<!-- ══════════════ SERVICE NAV ══════════════ -->
+<div class="service-nav">
+  <button class="service-tab active" onclick="showService('ecosystem', this)">⚡ AI Agent Ecosystem</button>
+  <button class="service-tab" onclick="showService('seo', this)">🔍 SEO / GEO Agent</button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PANEL 1 — AI AGENT ECOSYSTEM
+     ════════════════════════════════════════════ -->
+<div class="service-panel active" id="p-ecosystem">
+  <div class="ecosystem-wrap">
+    <div class="page-eyebrow">Agent suite 01 — full business automation</div>
+    <h2 class="page-title">Six agents. One ecosystem. Always working.</h2>
+    <p class="page-sub">Click any node to see what the agent reads, learns, and does — in real time.</p>
+
+    <div class="ecosystem-widget">
+      <div id="aae-root">
+        <canvas id="aae-c"></canvas>
+        <div class="aae-ht" id="aae-ht">Tap a node</div>
+        <div id="aae-av">
+          <div class="aae-bar">
+            <button class="aae-bk" id="aae-bk">← all agents</button>
+            <div>
+              <div class="aae-nm" id="aae-nm"></div>
+              <div class="aae-rep" id="aae-rep"></div>
+            </div>
+          </div>
+          <div class="aae-body">
+            <div class="aae-sc">
+              <div class="aae-shd">
+                <div class="aae-shl"><div class="aae-ld"></div><div class="aae-sht">Reading the world — non-stop</div></div>
+                <div class="aae-ct">signals: <span id="aae-sn">0</span></div>
+              </div>
+              <div class="aae-sb"><div class="aae-si" id="aae-si"></div></div>
+            </div>
+            <div class="aae-vd"></div>
+            <div class="aae-rc">
+              <div class="aae-sh">
+                <div class="aae-si2" style="background:rgba(129,140,248,.1);color:#818CF8">◈</div>
+                <div class="aae-st">What it learned</div>
+              </div>
+              <div class="aae-lb" id="aae-lb"></div>
+              <hr class="aae-hr"/>
+              <div class="aae-sh">
+                <div class="aae-si2" style="background:rgba(245,158,11,.1);color:#F59E0B">⚡</div>
+                <div class="aae-st">What it's doing — right now</div>
+              </div>
+              <div class="aae-ab" id="aae-ab"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PANEL 2 — SEO / GEO AGENT
+     ════════════════════════════════════════════ -->
+<div class="service-panel" id="p-seo">
+  <div class="seo-wrap">
+    <div class="seo-intro">
+      <div class="page-eyebrow">Agent suite 02 — digital visibility</div>
+      <h2 class="page-title">Get found everywhere — Google, ChatGPT, Perplexity.</h2>
+      <p class="page-sub">Traditional SEO is not enough anymore. Customers discover businesses through AI-generated answers. Our agent optimises your content for both search engines and generative AI — so you show up wherever people are looking.</p>
+    </div>
+
+    <div class="seo-layout">
+      <div class="video-container">
+        <video controls preload="metadata" playsinline>
+          <source src="./demo.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div class="seo-legend">
+        <div class="legend-title">What the agent does</div>
+
+        <div class="seo-feature">
+          <div class="seo-feat-icon seo-n1">1</div>
+          <div class="seo-feat-text">
+            <strong>Content audit & gap analysis</strong>
+            <div class="seo-feat-sub">Scans your site and identifies what's missing vs what competitors rank for — in both Google and AI engines.</div>
+          </div>
+        </div>
+        <div class="seo-feature">
+          <div class="seo-feat-icon seo-n2">2</div>
+          <div class="seo-feat-text">
+            <strong>AI-optimised content generation</strong>
+            <div class="seo-feat-sub">Writes and rewrites pages so they're structured for both traditional SEO and LLM citation — schema, entity linking, Q&A format.</div>
+          </div>
+        </div>
+        <div class="seo-feature">
+          <div class="seo-feat-icon seo-n3">3</div>
+          <div class="seo-feat-text">
+            <strong>GEO monitoring</strong>
+            <div class="seo-feat-sub">Tracks whether your brand appears in ChatGPT, Perplexity, and Google AI Overviews — and alerts you when it doesn't.</div>
+          </div>
+        </div>
+        <div class="seo-feature">
+          <div class="seo-feat-icon seo-n4">4</div>
+          <div class="seo-feat-text">
+            <strong>Continuous improvement loop</strong>
+            <div class="seo-feat-sub">Every week the agent re-checks rankings, updates content, and adapts to algorithm changes — no manual effort needed.</div>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="seo-stats">
+          <div class="seo-stat"><div class="seo-sv">+65%</div><div class="seo-sl">organic traffic in 90 days</div></div>
+          <div class="seo-stat"><div class="seo-sv">3×</div><div class="seo-sl">AI citation appearances</div></div>
+          <div class="seo-stat"><div class="seo-sv">0h</div><div class="seo-sl">manual SEO work per week</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">Orchestra — AI Agents for Business · 2026</div>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+/* ── Service tab switching ── */
+function showService(id, btn) {
+  document.querySelectorAll('.service-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('p-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── AI Agent Ecosystem Engine ── */
+(function(){
+const ND={
+  0:{color:'#F59E0B',label:'Client Agent',replaces:['Account Manager','Sales Rep'],
+    pool:[
+      {i:'◎',t:'New enquiry — villa Dubai Hills, AED 380K',v:'High intent',vc:'#F59E0B',a:false},
+      {i:'◈',t:'Email opened: <b>proposal #7</b> — 3rd time today',v:'🔥',vc:'#EF4444',a:false},
+      {i:'◉',t:'Scanning: "interior designer Dubai Hills"',v:'',a:false},
+      {i:'◎',t:'Past client — new project permit filed',v:'Signal',vc:'#F59E0B',a:true},
+      {i:'◈',t:'Reply drafted to enquiry #12 — tone matched',v:'2 min',vc:'rgba(255,255,255,.25)',a:true},
+      {i:'◉',t:'Instagram: 4 saves on portfolio post',v:'',a:false},
+      {i:'◎',t:'Competitor: 2-day reply delay detected',v:'Our edge',vc:'#10B981',a:false},
+      {i:'◈',t:'Follow-up queued — <b>no reply in 48h</b>',v:'Scheduled',vc:'rgba(255,255,255,.2)',a:true},
+      {i:'◉',t:'LinkedIn: decision maker viewed studio page',v:'Signal',vc:'#F59E0B',a:false},
+      {i:'◎',t:'Review #41 — answered in brand tone',v:'< 4h',vc:'#10B981',a:true},
+      {i:'◈',t:'Enquiry #13 scored: referral + clear brief',v:'91/100',vc:'#10B981',a:false},
+      {i:'◉',t:'Cold lead visited portfolio twice this week',v:'Warm',vc:'#F59E0B',a:false},
+      {i:'◎',t:'Personalised outreach drafted',v:'Ready',vc:'#10B981',a:true},
+      {i:'◈',t:'Mailbox: <b>0 unanswered enquiries</b>',v:'Clean',vc:'#10B981',a:false},
+    ],
+    learnings:[
+      {t:'You respond 14× faster than competitors',s:'Avg peer reply: 26h · Yours: 2 min',src:'↳ web scan · 12 competitor profiles',c:'#818CF8'},
+      {t:'1 warm lead hesitating — 4 visits, no contact',s:'Pattern matches high-intent undecided profile',src:'↳ analytics · visitor behaviour today',c:'#F59E0B'},
+      {t:'Referral leads close at 3× average rate',s:'18 months · 24 signed projects analysed',src:'↳ CRM history · deal data',c:'#10B981'},
+    ],
+    actions:[
+      {st:'done',t:'12 enquiries handled today',s:'All personalised — zero manual input',tag:'Complete',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+      {st:'run', t:'Outreach drafted — warm lead (4× visit)',s:'Awaiting your approval before sending',tag:'Awaiting you',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+      {st:'wait',t:'Re-engagement — 3 cold leads',s:'Scheduled Tuesday 9 AM · peak window',tag:'Queued',tc:'rgba(255,255,255,.3)',tb:'rgba(255,255,255,.05)'},
+    ]
+  },
+  1:{color:'#818CF8',label:'Content Agent',replaces:['Social Media Manager','Copywriter'],
+    pool:[
+      {i:'◎',t:'Instagram: 340 posts in niche scanned',v:'Done',vc:'rgba(255,255,255,.2)',a:false},
+      {i:'◈',t:'Top format: <b>behind-the-scenes</b>',v:'↑ 3.4×',vc:'#818CF8',a:false},
+      {i:'◉',t:'Best 3 project shots selected',v:'Auto',vc:'rgba(255,255,255,.2)',a:true},
+      {i:'◎',t:'Caption drafted — aspirational, 280 chars',v:'',a:false},
+      {i:'◈',t:'Scheduled: Instagram + LinkedIn — Tue 9h',v:'Peak slot',vc:'#818CF8',a:true},
+      {i:'◉',t:'Reach +34% vs last month average',v:'↑ 34%',vc:'#10B981',a:false},
+      {i:'◎',t:'SEO: "interior designer Dubai" — rank #4',v:'↑ 2',vc:'#10B981',a:false},
+      {i:'◈',t:'Architecture blog mention detected',v:'New',vc:'#F59E0B',a:false},
+      {i:'◉',t:'Case study drafted from blog mention',v:'Writing',vc:'#818CF8',a:true},
+      {i:'◎',t:'Keyword gap: "luxury reno Dubai" — 0 content',v:'Opportunity',vc:'#F59E0B',a:false},
+      {i:'◈',t:'SEO article brief — 800 words ready',v:'Ready',vc:'#818CF8',a:true},
+      {i:'◉',t:'6-week calendar updated — BTS prioritised',v:'Done',vc:'#818CF8',a:true},
+    ],
+    learnings:[
+      {t:'Behind-the-scenes = 3.4× more saves',s:'Saves convert to enquiries at 8× rate of likes',src:'↳ 24 months your analytics · confirmed today',c:'#818CF8'},
+      {t:'Tuesday 9 AM — your peak window',s:'37% above average post engagement',src:'↳ Instagram + LinkedIn · 2 years data',c:'#F59E0B'},
+      {t:'Keyword gap: "luxury renovation Dubai"',s:'Competitors rank 3× more on this term',src:'↳ Google · live SEO scan · this morning',c:'#10B981'},
+    ],
+    actions:[
+      {st:'done',t:'3 posts published this week',s:'Your tone · peak time · zero briefing',tag:'Complete',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+      {st:'run', t:'SEO article being drafted',s:'"Luxury renovation Dubai" — gap found today',tag:'Writing',tc:'#818CF8',tb:'rgba(129,140,248,.1)'},
+      {st:'wait',t:'6-week content calendar ready',s:'BTS format prioritised — awaiting review',tag:'Draft ready',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    ]
+  },
+  2:{color:'#34D399',label:'Biz Dev Agent',replaces:['BD Director','Senior Advisor'],
+    pool:[
+      {i:'◈',t:'Morning scan — <b>1,200 signals processed</b>',v:'06:00',vc:'rgba(255,255,255,.2)',a:false},
+      {i:'◎',t:'Dubai luxury demand: <b>+18% this quarter</b>',v:'↑',vc:'#34D399',a:false},
+      {i:'◉',t:'Past client — expansion permit filed',v:'🎯',vc:'#F59E0B',a:false},
+      {i:'◈',t:'Competitor raised prices — window open',v:'Gap',vc:'#34D399',a:false},
+      {i:'◎',t:'Decision-maker viewed your profile',v:'Signal',vc:'#F59E0B',a:false},
+      {i:'◉',t:'New DIFC project announced — AED 2.4M',v:'Relevant',vc:'#34D399',a:false},
+      {i:'◈',t:'Mutual connection path → target found',v:'2 hops',vc:'#34D399',a:true},
+      {i:'◎',t:'Pricing: 22% below 14 studios — gap',v:'Flag',vc:'#F59E0B',a:false},
+      {i:'◉',t:'FF&E pattern: 3 clients asked for it',v:'Revenue',vc:'#34D399',a:false},
+      {i:'◈',t:'Pitch drafted for permit client',v:'Ready',vc:'#34D399',a:true},
+      {i:'◎',t:'7 new opportunities mapped this week',v:'Pipeline',vc:'#34D399',a:false},
+      {i:'◉',t:'Pricing +15% modelled — win rate stable',v:'Validated',vc:'#F59E0B',a:true},
+    ],
+    learnings:[
+      {t:'2 past clients expanding — no designer hired',s:'Permits filed 11 days ago. You\'re first.',src:'↳ public registry · business news · live',c:'#34D399'},
+      {t:'Your pricing 22% below comparable studios',s:'Same quality — lower price hurts positioning',src:'↳ 14 competitor websites · scanned today',c:'#F59E0B'},
+      {t:'FF&E = AED 180K/yr opportunity ignored',s:'3 clients asked · competitors charge 12% fee',src:'↳ CRM requests + market benchmarks',c:'#818CF8'},
+    ],
+    actions:[
+      {st:'done',t:'7 new opportunities mapped',s:'You were aware of 0 of them',tag:'Pipeline',tc:'#34D399',tb:'rgba(52,211,153,.1)'},
+      {st:'run', t:'Warm intro drafted → target contact',s:'Path mapped via mutual connection',tag:'Ready to send',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+      {st:'wait',t:'Pitch for 2 permit clients',s:'Personalised briefs · awaiting your go',tag:'Awaiting you',tc:'#34D399',tb:'rgba(52,211,153,.1)'},
+    ]
+  },
+  3:{color:'#10B981',label:'Project Agent',replaces:['Project Manager','Coordinator'],
+    pool:[
+      {i:'◈',t:'6 projects checked — <b>1 risk flag</b>',v:'07:00',vc:'#F59E0B',a:false},
+      {i:'◎',t:'Marble delivery: 8-day delay detected',v:'Day 1',vc:'#EF4444',a:false},
+      {i:'◉',t:'Client notified — 2 options offered',v:'Done',vc:'#10B981',a:true},
+      {i:'◈',t:'Contractor updated · schedule rebalanced',v:'Auto',vc:'#10B981',a:true},
+      {i:'◎',t:'Client 4 approval: 5 days overdue',v:'Chasing',vc:'#F59E0B',a:false},
+      {i:'◉',t:'Nudge sent — unblocks 3 workstreams',v:'Sent',vc:'#10B981',a:true},
+      {i:'◈',t:'Budget P2: <b>87% spend, 60% done</b>',v:'Flag',vc:'#EF4444',a:false},
+      {i:'◎',t:'Client 3: silent for 14 days',v:'⚠',vc:'#F59E0B',a:false},
+      {i:'◉',t:'Call brief drafted — Client 3',v:'Suggested',vc:'#F59E0B',a:true},
+      {i:'◈',t:'6 project logs updated — 0 manual',v:'Auto',vc:'rgba(255,255,255,.2)',a:false},
+      {i:'◎',t:'6 weekly summaries drafted',v:'Ready',vc:'#10B981',a:true},
+    ],
+    learnings:[
+      {t:'Client 3 silent 14 days — churn signal',s:'No complaint. Matches 3 past churn patterns.',src:'↳ email tracking · CRM pattern match',c:'#F59E0B'},
+      {t:'Delays now caught on day 1, not day 6',s:'Day-1 detection saves 3× recovery cost',src:'↳ project history · 24 completed',c:'#10B981'},
+      {t:'Approval delays = 68% of schedule slippage',s:'Automating nudges cut this by half',src:'↳ timeline analysis · all active projects',c:'#818CF8'},
+    ],
+    actions:[
+      {st:'done',t:'0 delays reached clients this week',s:'6 projects — all resolved upstream',tag:'Clean',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+      {st:'run', t:'Personal call brief — Client 3',s:'Cooling relationship · action suggested',tag:'Suggested',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+      {st:'wait',t:'6 weekly summaries',s:'Drafted · ready for your review',tag:'Review',tc:'rgba(255,255,255,.3)',tb:'rgba(255,255,255,.05)'},
+    ]
+  },
+  4:{color:'#F472B6',label:'Finance Agent',replaces:['Finance Controller','Credit Controller'],
+    pool:[
+      {i:'◈',t:'Cash position updated — live',v:'AED 284K',vc:'#F472B6',a:false},
+      {i:'◎',t:'Invoice #14: 32 days overdue — AED 48K',v:'Flagged',vc:'#EF4444',a:false},
+      {i:'◉',t:'Professional reminder sent — on-brand',v:'Done',vc:'#F472B6',a:true},
+      {i:'◈',t:'3 proposals pending — forecast updated',v:'Auto',vc:'rgba(255,255,255,.2)',a:false},
+      {i:'◎',t:'Supplier payment Friday — AED 22K',v:'Flagged',vc:'#F59E0B',a:false},
+      {i:'◉',t:'60-day cash model recalculated',v:'Updated',vc:'#F472B6',a:false},
+      {i:'◈',t:'<b>Week 7 gap: AED 28K</b> — alert',v:'⚠',vc:'#EF4444',a:true},
+      {i:'◎',t:'2 proposals close = hire in 6 weeks',v:'Modelled',vc:'#F59E0B',a:false},
+      {i:'◉',t:'Invoice #12 received overnight',v:'AED 24K',vc:'#10B981',a:false},
+      {i:'◈',t:'Avg invoice paid 11 days late — cost tracked',v:'AED 40K/yr',vc:'#F59E0B',a:false},
+      {i:'◎',t:'Hiring brief drafted — 6-week window',v:'Proactive',vc:'#F472B6',a:true},
+    ],
+    learnings:[
+      {t:'Week 7 cash gap: AED 28K incoming',s:'If invoice #12 late + PO timing unchanged',src:'↳ cash model · live pipeline + costs',c:'#EF4444'},
+      {t:'2 proposals close = hire needed in 6 weeks',s:'Capacity model ran — window is now open',src:'↳ pipeline probability · team capacity',c:'#F59E0B'},
+      {t:'Late invoices cost AED 40K/yr in cash drag',s:'Average 11-day delay · 3 years of data',src:'↳ invoice history · pattern analysis',c:'#818CF8'},
+    ],
+    actions:[
+      {st:'done',t:'AED 48K recovered — 2 payments',s:'Polite reminders · both paid this week',tag:'Result',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+      {st:'run', t:'Week 7 gap — 3 options modelled',s:'Invoice now · delay PO · draw on reserve',tag:'Decide',tc:'#EF4444',tb:'rgba(239,68,68,.1)'},
+      {st:'wait',t:'Hiring brief — 6-week window',s:'Revenue scenario triggered this',tag:'Proactive',tc:'#F472B6',tb:'rgba(244,114,182,.1)'},
+    ]
+  },
+  5:{color:'#FB923C',label:'Strategy Agent',replaces:['Chief of Staff','Senior Strategist'],
+    pool:[
+      {i:'◈',t:'Daily brief — <b>1,200 market signals read</b>',v:'06:00',vc:'rgba(255,255,255,.2)',a:false},
+      {i:'◎',t:'Dubai luxury demand: +18% this quarter',v:'↑',vc:'#FB923C',a:false},
+      {i:'◉',t:'Your pricing: 22% below 14 competitors',v:'Gap',vc:'#F59E0B',a:false},
+      {i:'◈',t:'Competitor took 3 of your target clients',v:'Pattern',vc:'#EF4444',a:false},
+      {i:'◎',t:'Pricing +15%: win rate unchanged — validated',v:'✓',vc:'#FB923C',a:true},
+      {i:'◉',t:'FF&E: 3 clients asked · +35% revenue/project',v:'Opportunity',vc:'#FB923C',a:false},
+      {i:'◈',t:'74% revenue traces to 2 referral sources',v:'Insight',vc:'#10B981',a:false},
+      {i:'◎',t:'Q3 strategic brief — 3 priorities drafted',v:'Ready',vc:'#10B981',a:true},
+      {i:'◉',t:'Adjacent market: Abu Dhabi luxury growing',v:'Adjacent',vc:'#FB923C',a:false},
+      {i:'◈',t:'Referral network mapped — brief drafted',v:'Draft',vc:'#FB923C',a:true},
+      {i:'◎',t:'Competitor pricing raised — window open',v:'Now',vc:'#10B981',a:false},
+      {i:'◉',t:'Abu Dhabi expansion modelled',v:'Scenario',vc:'#FB923C',a:true},
+    ],
+    learnings:[
+      {t:'Most affordable premium studio in Dubai',s:'Raising +15% increases revenue AND client quality',src:'↳ 14 competitor sites · win rate · client data',c:'#FB923C'},
+      {t:'FF&E = AED 180K/yr left on the table',s:'3 clients asked. You said no. Competitors don\'t.',src:'↳ CRM requests · market benchmarks · today',c:'#F59E0B'},
+      {t:'74% of revenue: 2 original relationships',s:'Activating them = highest-ROI action right now',src:'↳ CRM analysis · 3 years · deal origins',c:'#10B981'},
+    ],
+    actions:[
+      {st:'done',t:'Q3 brief — 3 priorities identified',s:'Pricing · FF&E launch · referral activation',tag:'Ready',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+      {st:'run', t:'Price increase — all scenarios running',s:'+10% +15% +20% impact on pipeline',tag:'Running',tc:'#FB923C',tb:'rgba(251,146,60,.1)'},
+      {st:'wait',t:'FF&E brief + 3 client opportunities',s:'Revenue model built — awaiting decision',tag:'Awaiting you',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    ]
+  },
+};
+
+const NODES=[
+  {id:0,label:'Clients',  sub:'Always on',       angle:0,  color:'#F59E0B'},
+  {id:1,label:'Content',  sub:'Always creating', angle:60, color:'#818CF8'},
+  {id:2,label:'Biz Dev',  sub:'Always hunting',  angle:120,color:'#34D399'},
+  {id:3,label:'Projects', sub:'Always tracking', angle:180,color:'#10B981'},
+  {id:4,label:'Finance',  sub:'Always watching', angle:240,color:'#F472B6'},
+  {id:5,label:'Strategy', sub:'Always thinking', angle:300,color:'#FB923C'},
+];
+
+const root=document.getElementById('aae-root');
+const canvas=document.getElementById('aae-c');
+const ctx=canvas.getContext('2d');
+let mode='o',sel=null,oa=0,pp=0,pd=1,op=[],stmrId=null,poolIdx=0,sigCount=0;
+
+function W(){return root.clientWidth}
+function H(){return root.clientHeight}
+function cx(){return W()/2}
+function cy(){return H()/2}
+function R(){return Math.min(W(),H())*0.295}
+function hr(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`rgba(${r},${g},${b},${a})`}
+
+function rsz(){
+  canvas.width=W()*devicePixelRatio;
+  canvas.height=H()*devicePixelRatio;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+}
+window.addEventListener('resize',rsz);rsz();
+
+function npos(n){
+  const a=(n.angle+oa)*Math.PI/180;
+  return{x:cx()+Math.cos(a)*R(),y:cy()+Math.sin(a)*R()};
+}
+
+function drawOrbit(){
+  ctx.beginPath();ctx.arc(cx(),cy(),R(),0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=.5;ctx.setLineDash([2,8]);ctx.stroke();ctx.setLineDash([]);
+  NODES.forEach((n,i)=>NODES.forEach((m,j)=>{
+    if(j<=i)return;
+    const a=npos(n),b=npos(m);
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(cx(),cy());ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=.5;ctx.setLineDash([2,6]);ctx.stroke();ctx.setLineDash([]);
+  }));
+  const pr=22+pp*5;
+  ctx.save();ctx.globalAlpha=.05+pp*.04;ctx.beginPath();ctx.arc(cx(),cy(),pr*3,0,Math.PI*2);ctx.fillStyle='#F59E0B';ctx.fill();ctx.restore();
+  ctx.save();ctx.globalAlpha=.09+pp*.05;ctx.beginPath();ctx.arc(cx(),cy(),pr*1.7,0,Math.PI*2);ctx.fillStyle='#F59E0B';ctx.fill();ctx.restore();
+  ctx.beginPath();ctx.arc(cx(),cy(),21,0,Math.PI*2);ctx.fillStyle='#080808';ctx.fill();
+  ctx.strokeStyle='rgba(245,158,11,.38)';ctx.lineWidth=.8;ctx.stroke();
+  ctx.save();ctx.font='bold 10px "Syne",sans-serif';ctx.fillStyle='#F59E0B';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('AI',cx(),cy()-1);
+  ctx.font='300 6.5px "DM Sans",sans-serif';ctx.fillStyle='rgba(245,158,11,.32)';ctx.fillText('AGENTS',cx(),cy()+11);ctx.restore();
+  NODES.forEach(n=>{
+    const p=npos(n),pulse=Math.sin(Date.now()/600+n.id*1.1)*.5+.5;
+    ctx.save();
+    ctx.beginPath();ctx.arc(p.x,p.y,26,0,Math.PI*2);ctx.strokeStyle=hr(n.color,.08+pulse*.04);ctx.lineWidth=7;ctx.stroke();
+    ctx.beginPath();ctx.arc(p.x,p.y,18,0,Math.PI*2);ctx.fillStyle='#080808';ctx.fill();
+    ctx.strokeStyle=hr(n.color,.2+pulse*.1);ctx.lineWidth=.7;ctx.stroke();
+    ctx.font='500 10px "DM Sans",sans-serif';ctx.fillStyle=n.color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,p.x,p.y-1.5);
+    ctx.font='300 7px "DM Sans",sans-serif';ctx.fillStyle='rgba(240,239,232,.2)';ctx.fillText(n.sub,p.x,p.y+9);
+    ctx.restore();
+  });
+}
+
+function drawParts(){
+  if(Math.random()<.024){
+    const pairs=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[0,3],[2,5]];
+    const [ai,bi]=pairs[Math.floor(Math.random()*pairs.length)];
+    const a=npos(NODES[ai]),b=npos(NODES[bi]);
+    op.push({x0:a.x,y0:a.y,cpx:cx(),cpy:cy(),x1:b.x,y1:b.y,t:0,sp:.005+Math.random()*.003,col:NODES[ai].color});
+  }
+  op=op.filter(p=>p.t<1);
+  op.forEach(p=>{
+    p.t+=p.sp;const t=p.t;
+    const x=(1-t)*(1-t)*p.x0+2*(1-t)*t*p.cpx+t*t*p.x1;
+    const y=(1-t)*(1-t)*p.y0+2*(1-t)*t*p.cpy+t*t*p.y1;
+    ctx.save();ctx.globalAlpha=Math.sin(t*Math.PI)*.6;
+    ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();ctx.restore();
+  });
+}
+
+(function loop(){
+  requestAnimationFrame(loop);
+  ctx.clearRect(0,0,W(),H());
+  oa+=.022;pp+=.018*pd;if(pp>1||pp<0)pd*=-1;
+  if(mode==='o'){drawOrbit();drawParts();}
+})();
+
+function nowStr(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+
+function addLine(nd){
+  const si=document.getElementById('aae-si');if(!si)return;
+  const f=nd.pool[poolIdx%nd.pool.length];poolIdx++;
+  const d=document.createElement('div');
+  d.className='aae-sl'+(f.a?' aae-act-line':'');
+  const vhtml=f.v?`<span class="aae-vl" style="color:${f.vc||'rgba(255,255,255,.2)'}">${f.v}</span>`:'';
+  d.innerHTML=`<span class="aae-ts">${nowStr()}</span><span class="aae-ic" style="color:${nd.color}">${f.i}</span><span class="aae-tx">${f.t}</span>${vhtml}`;
+  si.appendChild(d);
+  while(si.children.length>18){
+    const old=si.children[0];old.style.transition='opacity .4s';old.style.opacity='0';
+    setTimeout(()=>{if(old.parentNode===si)si.removeChild(old)},400);
+  }
+  const lh=24,bh=si.parentElement.clientHeight,th=si.children.length*lh;
+  if(th>bh-24)si.style.transform=`translateY(${-(th-(bh-24))}px)`;
+  si.style.transition='transform .6s cubic-bezier(.4,0,.2,1)';
+  sigCount+=Math.floor(Math.random()*3)+1;
+  const sn=document.getElementById('aae-sn');if(sn)sn.textContent=sigCount.toLocaleString();
+}
+
+/* ── expanded pools for right panel so it never repeats quickly ── */
+const EXTRA_LEARNINGS={
+  0:[
+    {t:'Weekend enquiries convert 2.4× better',s:'Saturday 10 AM = highest close rate',src:'↳ 14 months CRM · deal timing',c:'#818CF8'},
+    {t:'Clients who get a reply < 5 min sign 3× more',s:'Speed = trust signal for high-value leads',src:'↳ response time vs close rate · all deals',c:'#10B981'},
+    {t:'Portfolio page = #1 driver of inbound',s:'62% of signed clients visited it before enquiry',src:'↳ analytics · attribution model',c:'#F59E0B'},
+    {t:'Unanswered follow-ups cost AED 220K/yr',s:'31 leads lost to slow second reply',src:'↳ CRM dead-lead analysis · 2 years',c:'#EF4444'},
+  ],
+  1:[
+    {t:'Reels under 18s get 2.1× more reach',s:'Sweet spot: 12–15 seconds for your niche',src:'↳ Instagram insights · 6 months',c:'#818CF8'},
+    {t:'Portfolio posts at night underperform by 40%',s:'Audience active 8–11 AM and 7–9 PM',src:'↳ engagement heatmap · 1 year data',c:'#F59E0B'},
+    {t:'3 competitor blogs rank above you on 12 terms',s:'Content gap = opportunity for 8 articles',src:'↳ SEO audit · Ahrefs equivalent · today',c:'#10B981'},
+    {t:'Client testimonial posts = 4.8× more saves',s:'Social proof outperforms all other formats',src:'↳ content performance · 18 months',c:'#EF4444'},
+  ],
+  2:[
+    {t:'Decision-makers respond 3× more on Tuesday',s:'Best window: 9–11 AM Dubai time',src:'↳ outreach history · 200 contacts',c:'#34D399'},
+    {t:'Abu Dhabi luxury segment growing 22% YoY',s:'3 competitors already entered — window closing',src:'↳ market intelligence · DLD data',c:'#F59E0B'},
+    {t:'Warm intros close 5× vs cold outreach',s:'Mutual connection = trust shortcut',src:'↳ deal origin analysis · 3 years',c:'#818CF8'},
+    {t:'Your close rate on AED 500K+ = 41%',s:'Higher than average — lean into premium',src:'↳ CRM · deal size vs outcome',c:'#10B981'},
+  ],
+  3:[
+    {t:'Material delays = 72% of all project overruns',s:'Early supplier check saves avg 9 days',src:'↳ 24 completed projects · delay logs',c:'#10B981'},
+    {t:'Clients who get weekly updates churn 60% less',s:'Communication frequency = retention lever',src:'↳ project satisfaction surveys · 2 years',c:'#818CF8'},
+    {t:'Friday approvals take 3× longer than Monday',s:'Send approval requests Mon/Tue for speed',src:'↳ approval timestamp analysis',c:'#F59E0B'},
+    {t:'Budget overruns cluster in phase 2–3',s:'Tighter tracking needed mid-project',src:'↳ budget vs actual · all projects',c:'#EF4444'},
+  ],
+  4:[
+    {t:'Q2 historically 18% lower in collections',s:'Pre-schedule reminders for May invoices',src:'↳ 3-year payment pattern analysis',c:'#F59E0B'},
+    {t:'Clients paying by bank transfer: 6 days faster',s:'Offer bank details upfront on invoices',src:'↳ payment method vs speed · all invoices',c:'#10B981'},
+    {t:'Supplier X invoices consistently 8% above quote',s:'Renegotiate or switch — AED 14K/yr savings',src:'↳ PO vs invoice comparison · 18 months',c:'#EF4444'},
+    {t:'Cash reserves cover 4.2 weeks at burn rate',s:'Healthy but watch if 2 projects delayed',src:'↳ live cash model · updated today',c:'#818CF8'},
+  ],
+  5:[
+    {t:'Your NPS is 72 — top quartile for studios',s:'But 2 detractors trace to same issue: timeline',src:'↳ client survey analysis · all projects',c:'#FB923C'},
+    {t:'Hospitality vertical = 3× your avg project value',s:'2 inbound enquiries from hotels this quarter',src:'↳ CRM segment · revenue analysis',c:'#10B981'},
+    {t:'Competitor A lost 2 senior designers',s:'Their capacity is down — your pipeline may grow',src:'↳ LinkedIn monitoring · team changes',c:'#F59E0B'},
+    {t:'Retainer model = 40% more predictable revenue',s:'3 competitors offer it — you don\'t yet',src:'↳ market benchmarks · pricing research',c:'#818CF8'},
+  ],
+};
+
+const EXTRA_ACTIONS={
+  0:[
+    {t:'VIP client birthday — gift note drafted',s:'Sends tomorrow if approved',tag:'Personal',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    {t:'3 proposals expiring this week',s:'Gentle nudge drafted for each',tag:'Follow-up',tc:'#818CF8',tb:'rgba(129,140,248,.1)'},
+    {t:'New lead scored 94/100 — fast-tracked',s:'Response sent in 47 seconds',tag:'Done',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Competitor response time increased to 34h',s:'Your advantage widening',tag:'Intel',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+  ],
+  1:[
+    {t:'Case study video — edit complete',s:'30s version for Reels + 90s for LinkedIn',tag:'Ready',tc:'#818CF8',tb:'rgba(129,140,248,.1)'},
+    {t:'Blog post scheduled — "Dubai villa trends"',s:'1,200 words · 6 images · SEO optimised',tag:'Queued',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Competitor content gap report generated',s:'12 topics they rank on, you don\'t',tag:'Insight',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    {t:'Pinterest board auto-updated',s:'14 new pins from recent project shoot',tag:'Done',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+  ],
+  2:[
+    {t:'New DIFC tower — developer contact found',s:'Intro path via mutual connection mapped',tag:'Opportunity',tc:'#34D399',tb:'rgba(52,211,153,.1)'},
+    {t:'Market report — Dubai Q1 luxury digest',s:'Sent to 3 key prospects as value-add',tag:'Sent',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Pricing deck updated with new benchmarks',s:'14 competitors · refreshed this morning',tag:'Updated',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    {t:'Partnership brief — furniture brand collab',s:'Revenue share model drafted',tag:'Draft',tc:'#34D399',tb:'rgba(52,211,153,.1)'},
+  ],
+  3:[
+    {t:'Contractor schedule conflict resolved',s:'Electrician moved to Thursday — no delay',tag:'Fixed',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Client 2 — mood board approved',s:'Phase 2 unlocked · materials ordered',tag:'Unlocked',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Snag list generated — 14 items',s:'Sent to contractor with photo evidence',tag:'Sent',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    {t:'Timeline risk — permit delay possible',s:'Backup plan drafted · 2 options',tag:'Mitigated',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+  ],
+  4:[
+    {t:'Invoice #15 sent — AED 36K',s:'Auto-generated from milestone completion',tag:'Sent',tc:'#F472B6',tb:'rgba(244,114,182,.1)'},
+    {t:'Tax filing reminder — deadline in 12 days',s:'Documents pre-assembled',tag:'Reminder',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+    {t:'Subscription audit — 3 unused tools found',s:'AED 4,200/yr savings identified',tag:'Savings',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Quarterly P&L report drafted',s:'Revenue +12% · margins stable',tag:'Report',tc:'#F472B6',tb:'rgba(244,114,182,.1)'},
+  ],
+  5:[
+    {t:'Expansion scenario — Al Ain market',s:'Small but zero competition · low-risk test',tag:'Modelled',tc:'#FB923C',tb:'rgba(251,146,60,.1)'},
+    {t:'Team capacity model updated',s:'Hiring window = 6 weeks if 2 deals close',tag:'Updated',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'Client satisfaction trend — improving',s:'NPS 72 → 78 over 6 months',tag:'Positive',tc:'#10B981',tb:'rgba(16,185,129,.1)'},
+    {t:'New service line brief — FF&E sourcing',s:'AED 180K/yr revenue potential validated',tag:'Brief ready',tc:'#F59E0B',tb:'rgba(245,158,11,.1)'},
+  ],
+};
+
+let learnCycle=0,actionCycle=0,rightTimerIds=[],activeNd=null;
+
+function getAllLearnings(nd){
+  const id=NODES.findIndex(n=>n.color===nd.color);
+  return [...nd.learnings,...(EXTRA_LEARNINGS[id]||[])];
+}
+function getAllActions(nd){
+  const id=NODES.findIndex(n=>n.color===nd.color);
+  const base=nd.actions.map(a=>({...a}));
+  const extra=(EXTRA_ACTIONS[id]||[]).map(a=>({...a,st:'run'}));
+  return [...base,...extra];
+}
+
+function startStream(nd){
+  poolIdx=0;sigCount=0;learnCycle=0;actionCycle=0;activeNd=nd;
+  const si=document.getElementById('aae-si');si.innerHTML='';si.style.transform='translateY(0)';
+  const sn=document.getElementById('aae-sn');if(sn)sn.textContent='0';
+  for(let i=0;i<5;i++)setTimeout(()=>addLine(nd),i*120);
+  /* continuous stream — setInterval so it truly never stops */
+  if(stmrId)clearInterval(stmrId);
+  stmrId=setInterval(()=>addLine(nd),1300);
+}
+
+function mkLearnEl(nd,idx){
+  const all=getAllLearnings(nd);
+  const l=all[idx%all.length];
+  const d=document.createElement('div');d.className='aae-lrn';
+  d.style.borderColor=hr(l.c,.18);
+  d.innerHTML=`<div class="aae-ld2" style="background:${l.c}"></div><div><div class="aae-lt">${l.t}</div><div class="aae-ls">${l.s}</div><div class="aae-lsrc">${l.src}</div></div>`;
+  return d;
+}
+
+function mkActionEl(nd,idx,forceState){
+  const all=getAllActions(nd);
+  const a=all[idx%all.length];
+  const st=forceState||a.st;
+  const d=document.createElement('div');d.className='aae-ac';
+  const sc=st==='done'?'aae-done':st==='run'?'aae-run':'aae-wait';
+  const icon=st==='done'?'✓':st==='run'?'◌':'○';
+  const tag=st==='done'?'Done':a.tag;
+  const tc2=st==='done'?'#10B981':a.tc||nd.color;
+  const tb2=st==='done'?'rgba(16,185,129,.1)':a.tb||hr(nd.color,.1);
+  const bg=st==='run'?hr(nd.color,.06):st==='done'?'rgba(16,185,129,.04)':'rgba(255,255,255,.016)';
+  const bd=st==='run'?hr(nd.color,.22):st==='done'?'rgba(16,185,129,.14)':'rgba(255,255,255,.05)';
+  d.style.background=bg;d.style.border=`.5px solid ${bd}`;
+  d.style.transition='all .5s ease';
+  d.innerHTML=`<div class="aae-as ${sc}">${icon}</div><div class="aae-ab2"><div class="aae-at">${a.t}</div><div class="aae-as2">${a.s}</div></div><span class="aae-atg" style="color:${tc2};background:${tb2}">${tag}</span>`;
+  return d;
+}
+
+function buildRight(nd){
+  const lb=document.getElementById('aae-lb');lb.innerHTML='';
+  nd.learnings.forEach((l,i)=>{
+    const d=mkLearnEl(nd,i);
+    lb.appendChild(d);setTimeout(()=>d.classList.add('on'),350+i*160);
+  });
+  learnCycle=nd.learnings.length;
+
+  const ab=document.getElementById('aae-ab');ab.innerHTML='';
+  nd.actions.forEach((a,i)=>{
+    const d=mkActionEl(nd,i);
+    ab.appendChild(d);setTimeout(()=>d.classList.add('on'),700+i*180);
+  });
+  actionCycle=nd.actions.length;
+
+  /* clear previous timers */
+  rightTimerIds.forEach(id=>clearTimeout(id));
+  rightTimerIds=[];
+
+  /* ── LEARNING ROTATION: every 5s, fade oldest → add new ── */
+  function rotateLearn(){
+    const lbEl=document.getElementById('aae-lb');
+    if(!lbEl||lbEl.children.length===0){rightTimerIds.push(setTimeout(rotateLearn,5000));return;}
+    const old=lbEl.children[0];
+    old.style.transition='opacity .6s, transform .6s';
+    old.style.opacity='0';old.style.transform='translateX(-12px)';
+    rightTimerIds.push(setTimeout(()=>{
+      if(old.parentNode===lbEl)lbEl.removeChild(old);
+      const nw=mkLearnEl(nd,learnCycle++);
+      lbEl.appendChild(nw);
+      setTimeout(()=>nw.classList.add('on'),60);
+    },600));
+    rightTimerIds.push(setTimeout(rotateLearn,7000+Math.random()*3000));
+  }
+  rightTimerIds.push(setTimeout(rotateLearn,5000));
+
+  /* ── ACTION ROTATION: mark top as "done" → pause → fade out → new task appears ── */
+  function rotateAction(){
+    const abEl=document.getElementById('aae-ab');
+    if(!abEl||abEl.children.length===0){rightTimerIds.push(setTimeout(rotateAction,6000));return;}
+    const top=abEl.children[0];
+    /* step 1: mark as done */
+    const statusEl=top.querySelector('.aae-as');
+    const tagEl=top.querySelector('.aae-atg');
+    if(statusEl){
+      statusEl.className='aae-as aae-done';
+      statusEl.textContent='✓';
+    }
+    if(tagEl){
+      tagEl.textContent='Done';
+      tagEl.style.color='#10B981';
+      tagEl.style.background='rgba(16,185,129,.1)';
+    }
+    top.style.background='rgba(16,185,129,.04)';
+    top.style.borderColor='rgba(16,185,129,.14)';
+
+    /* step 2: after 1.5s, fade out */
+    rightTimerIds.push(setTimeout(()=>{
+      top.style.transition='opacity .6s, transform .6s';
+      top.style.opacity='0';top.style.transform='translateX(-12px)';
+      /* step 3: remove and add new */
+      rightTimerIds.push(setTimeout(()=>{
+        if(top.parentNode===abEl)abEl.removeChild(top);
+        const nw=mkActionEl(nd,actionCycle++,'run');
+        abEl.appendChild(nw);
+        setTimeout(()=>nw.classList.add('on'),60);
+      },600));
+    },1500));
+
+    rightTimerIds.push(setTimeout(rotateAction,8000+Math.random()*4000));
+  }
+  rightTimerIds.push(setTimeout(rotateAction,6000));
+}
+
+function enter(id){
+  if(stmrId)clearInterval(stmrId);
+  rightTimerIds.forEach(t=>clearTimeout(t));rightTimerIds=[];
+  sel=id;const nd=ND[id];mode='a';op=[];
+  document.getElementById('aae-nm').textContent=nd.label;
+  document.getElementById('aae-nm').style.color=nd.color;
+  const rep=document.getElementById('aae-rep');
+  rep.innerHTML=nd.replaces.map(r=>`<span class="aae-ro">${r}</span>`).join(`<span class="aae-ra">→</span>`)+`<span class="aae-ra">→</span><span class="aae-rn" style="color:${nd.color};background:${hr(nd.color,.12)}">AI Agent</span>`;
+  startStream(nd);buildRight(nd);
+  document.getElementById('aae-ht').style.opacity='0';
+  document.getElementById('aae-av').classList.add('on');
+}
+
+function back(){
+  if(stmrId)clearInterval(stmrId);stmrId=null;
+  rightTimerIds.forEach(t=>clearTimeout(t));rightTimerIds=[];
+  mode='o';sel=null;
+  document.getElementById('aae-av').classList.remove('on');
+  setTimeout(()=>document.getElementById('aae-ht').style.opacity='1',300);
+}
+
+document.getElementById('aae-bk').addEventListener('click',back);
+canvas.addEventListener('click',e=>{
+  if(mode!=='o')return;
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  NODES.forEach(n=>{const p=npos(n);if(Math.hypot(mx-p.x,my-p.y)<26)enter(n.id);});
+});
+
+})();
+</script>
+
+</body>
+</html>
