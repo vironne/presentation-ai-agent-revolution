@@ -715,7 +715,7 @@ const EXTRA_ACTIONS={
   ],
 };
 
-let learnCycle=0,actionCycle=0,rightTimerIds=[],activeNd=null;
+let learnCycle=0,actionCycle=0,learnIntId=null,actionIntId=null,activeNd=null;
 
 function getAllLearnings(nd){
   const id=NODES.findIndex(n=>n.color===nd.color);
@@ -728,12 +728,17 @@ function getAllActions(nd){
   return [...base,...extra];
 }
 
+function clearAllTimers(){
+  if(stmrId){clearInterval(stmrId);stmrId=null;}
+  if(learnIntId){clearInterval(learnIntId);learnIntId=null;}
+  if(actionIntId){clearInterval(actionIntId);actionIntId=null;}
+}
+
 function startStream(nd){
   poolIdx=0;sigCount=0;learnCycle=0;actionCycle=0;activeNd=nd;
   const si=document.getElementById('aae-si');si.innerHTML='';si.style.transform='translateY(0)';
   const sn=document.getElementById('aae-sn');if(sn)sn.textContent='0';
   for(let i=0;i<5;i++)setTimeout(()=>addLine(nd),i*120);
-  /* continuous stream — setInterval so it truly never stops */
   if(stmrId)clearInterval(stmrId);
   stmrId=setInterval(()=>addLine(nd),1300);
 }
@@ -780,68 +785,51 @@ function buildRight(nd){
   });
   actionCycle=nd.actions.length;
 
-  /* clear previous timers */
-  rightTimerIds.forEach(id=>clearTimeout(id));
-  rightTimerIds=[];
-
-  /* ── LEARNING ROTATION: every 5s, fade oldest → add new ── */
-  function rotateLearn(){
+  /* clean setInterval for learnings — one tick every 8s */
+  if(learnIntId)clearInterval(learnIntId);
+  learnIntId=setInterval(()=>{
     const lbEl=document.getElementById('aae-lb');
-    if(!lbEl||lbEl.children.length===0){rightTimerIds.push(setTimeout(rotateLearn,5000));return;}
+    if(!lbEl||lbEl.children.length===0)return;
     const old=lbEl.children[0];
     old.style.transition='opacity .6s, transform .6s';
     old.style.opacity='0';old.style.transform='translateX(-12px)';
-    rightTimerIds.push(setTimeout(()=>{
+    setTimeout(()=>{
       if(old.parentNode===lbEl)lbEl.removeChild(old);
       const nw=mkLearnEl(nd,learnCycle++);
       lbEl.appendChild(nw);
       setTimeout(()=>nw.classList.add('on'),60);
-    },600));
-    rightTimerIds.push(setTimeout(rotateLearn,7000+Math.random()*3000));
-  }
-  rightTimerIds.push(setTimeout(rotateLearn,5000));
+    },650);
+  },8000);
 
-  /* ── ACTION ROTATION: mark top as "done" → pause → fade out → new task appears ── */
-  function rotateAction(){
+  /* clean setInterval for actions — one tick every 10s */
+  if(actionIntId)clearInterval(actionIntId);
+  actionIntId=setInterval(()=>{
     const abEl=document.getElementById('aae-ab');
-    if(!abEl||abEl.children.length===0){rightTimerIds.push(setTimeout(rotateAction,6000));return;}
+    if(!abEl||abEl.children.length===0)return;
     const top=abEl.children[0];
-    /* step 1: mark as done */
+    /* mark as done */
     const statusEl=top.querySelector('.aae-as');
     const tagEl=top.querySelector('.aae-atg');
-    if(statusEl){
-      statusEl.className='aae-as aae-done';
-      statusEl.textContent='✓';
-    }
-    if(tagEl){
-      tagEl.textContent='Done';
-      tagEl.style.color='#10B981';
-      tagEl.style.background='rgba(16,185,129,.1)';
-    }
+    if(statusEl){statusEl.className='aae-as aae-done';statusEl.textContent='✓';}
+    if(tagEl){tagEl.textContent='Done';tagEl.style.color='#10B981';tagEl.style.background='rgba(16,185,129,.1)';}
     top.style.background='rgba(16,185,129,.04)';
     top.style.borderColor='rgba(16,185,129,.14)';
-
-    /* step 2: after 1.5s, fade out */
-    rightTimerIds.push(setTimeout(()=>{
+    /* fade out after 1.5s, then add new */
+    setTimeout(()=>{
       top.style.transition='opacity .6s, transform .6s';
       top.style.opacity='0';top.style.transform='translateX(-12px)';
-      /* step 3: remove and add new */
-      rightTimerIds.push(setTimeout(()=>{
+      setTimeout(()=>{
         if(top.parentNode===abEl)abEl.removeChild(top);
         const nw=mkActionEl(nd,actionCycle++,'run');
         abEl.appendChild(nw);
         setTimeout(()=>nw.classList.add('on'),60);
-      },600));
-    },1500));
-
-    rightTimerIds.push(setTimeout(rotateAction,8000+Math.random()*4000));
-  }
-  rightTimerIds.push(setTimeout(rotateAction,6000));
+      },650);
+    },1500);
+  },10000);
 }
 
 function enter(id){
-  if(stmrId)clearInterval(stmrId);
-  rightTimerIds.forEach(t=>clearTimeout(t));rightTimerIds=[];
+  clearAllTimers();
   sel=id;const nd=ND[id];mode='a';op=[];
   document.getElementById('aae-nm').textContent=nd.label;
   document.getElementById('aae-nm').style.color=nd.color;
@@ -853,8 +841,7 @@ function enter(id){
 }
 
 function back(){
-  if(stmrId)clearInterval(stmrId);stmrId=null;
-  rightTimerIds.forEach(t=>clearTimeout(t));rightTimerIds=[];
+  clearAllTimers();
   mode='o';sel=null;
   document.getElementById('aae-av').classList.remove('on');
   setTimeout(()=>document.getElementById('aae-ht').style.opacity='1',300);
